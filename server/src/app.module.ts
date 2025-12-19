@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/jwt.guard';
+import { EmployeeModule } from './employee/employee.module';
+import { AvailabilityModule } from './availability/availability.module';
+import { AbsenceModule } from './absence/absence.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { JwtGuard } from './auth/jwt.guard';
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       synchronize: true,
     }),
+    EmployeeModule,
+    AvailabilityModule,
+    AbsenceModule,
   ],
   providers: [
     {
