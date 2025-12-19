@@ -46,8 +46,8 @@ export class EmployeeService {
     return this.employeeRepository.save(employee);
   }
 
-  async update(id: string, input: UpdateEmployeeInput): Promise<Employee> {
-    const employee = await this.findOne(id);
+  async update(input: UpdateEmployeeInput): Promise<Employee> {
+    const employee = await this.findOne(input.id);
     if (input.email && input.email !== employee.email) {
       const existing = await this.employeeRepository.findOne({
         where: { email: input.email },

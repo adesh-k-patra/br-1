@@ -35,10 +35,9 @@ export class EmployeeResolver {
   @UseGuards(RoleGuard)
   @Roles('manager')
   async updateEmployee(
-    @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateEmployeeInput,
   ): Promise<Employee> {
-    return this.employeeService.update(id, input);
+    return this.employeeService.update(input);
   }
 
   @Mutation(() => Boolean)

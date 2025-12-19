@@ -1,5 +1,5 @@
-import { InputType, Field, Float, PartialType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional, Min } from 'class-validator';
+import { InputType, Field, Float, PartialType, ID } from '@nestjs/graphql';
+import { IsEmail, IsNotEmpty, IsUUID, Min } from 'class-validator';
 
 @InputType()
 export class CreateEmployeeInput {
@@ -15,11 +15,14 @@ export class CreateEmployeeInput {
   @IsNotEmpty({ message: 'Role is required' })
   role: string;
 
-  @Field(() => Float, { nullable: true })
-  @IsOptional()
+  @Field(() => Float, { defaultValue: 8 })
   @Min(0)
-  defaultDailyCapacity?: number;
+  defaultDailyCapacity: number;
 }
 
 @InputType()
-export class UpdateEmployeeInput extends PartialType(CreateEmployeeInput) {}
+export class UpdateEmployeeInput extends PartialType(CreateEmployeeInput) {
+  @Field(() => ID)
+  @IsUUID()
+  id: string;
+}
