@@ -23,6 +23,10 @@ export class Employee {
 
   @Field()
   @Column()
+  email: string;
+
+  @Field()
+  @Column()
   role: string;
 
   @Field(() => Float)
