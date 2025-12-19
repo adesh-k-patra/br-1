@@ -3,6 +3,6 @@ import { AbsenceService } from './absence.service';
 import { AbsenceResolver } from './absence.resolver';
 
 @Module({
-  providers: [AbsenceService, AbsenceResolver]
+  providers: [AbsenceService, AbsenceResolver],
 })
 export class AbsenceModule {}
