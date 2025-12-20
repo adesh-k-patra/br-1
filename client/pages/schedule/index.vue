@@ -12,9 +12,17 @@ import {
   parseISO,
 } from "date-fns"
 import { GET_TEAM_SCHEDULE } from "~/graphql/queries"
+import { SET_AVAILABILITY } from "~/graphql/mutations"
 
+const toast = useToast()
+const nuxtApp = useNuxtApp()
+const apolloClient = nuxtApp.$apollo.defaultClient
+
+//Modal and UI State
 const currentDate = ref(new Date())
 const viewMode = ref<"week" | "month">("week")
+const isAvailabilityModalOpen = ref(false)
+const selectedEmployee = ref<any>(null)
 
 // Reactive date range for query
 const dateRange = computed(() => {
@@ -89,6 +97,58 @@ const navigate = (direction: "prev" | "next") => {
   }
 }
 
+const availabilityForm = ref({
+  date: "",
+  capacityHours: 8,
+  note: "",
+})
+
+// Availability Modal Handler
+const openAvailabilityModal = (
+  employee: any,
+  date: string,
+  effectiveCapacityHours: number
+) => {
+  selectedEmployee.value = employee
+  availabilityForm.value = {
+    date,
+    capacityHours: effectiveCapacityHours,
+    note: "",
+  }
+  isAvailabilityModalOpen.value = true
+}
+
+// Create/Update Availability
+const setAvailability = async () => {
+  try {
+    await apolloClient.mutate({
+      mutation: SET_AVAILABILITY,
+      variables: {
+        input: {
+          employeeId: selectedEmployee.value.employeeId,
+          date: availabilityForm.value.date,
+          capacityHours: availabilityForm.value.capacityHours,
+          note: availabilityForm.value.note || null,
+        },
+      },
+    })
+
+    toast.add({
+      title: "Availability set",
+      color: "green",
+    })
+
+    isAvailabilityModalOpen.value = false
+  } catch (err: any) {
+    toast.add({
+      title: "Error",
+      description: err.message,
+      color: "red",
+    })
+  }
+}
+
+// UI Helpers
 const goToToday = () => {
   currentDate.value = new Date()
 }
@@ -170,19 +230,26 @@ const getDayClass = (isAbsent: boolean) =>
           </thead>
 
           <tbody>
-            <tr
-              v-for="emp in employeeRows"
-              :key="emp.employeeId"
-              class="border-b"
-            >
+            <tr v-for="emp in employeeRows" :key="emp.employeeId">
               <td class="sticky left-0 bg-white p-2">
                 <div class="font-medium">{{ emp.employeeName }}</div>
                 <div class="text-sm text-gray-500">{{ emp.employeeRole }}</div>
               </td>
 
-              <td v-for="day in emp.days" :key="day.date" class="p-1">
+              <td
+                v-for="day in emp.days"
+                :key="day.date"
+                class="p-1 cursor-pointer"
+                @click.stop="
+                  openAvailabilityModal(
+                    emp,
+                    day.date,
+                    day.effectiveCapacityHours
+                  )
+                "
+              >
                 <div
-                  class="h-8 rounded flex items-center justify-center text-sm font-medium"
+                  class="h-8 rounded flex items-center justify-center text-sm font-medium transition hover:ring-2 hover:ring-brick-green/40"
                   :class="getDayClass(day.isAbsent)"
                 >
                   <span v-if="!day.isAbsent">
@@ -208,5 +275,48 @@ const getDayClass = (isAbsent: boolean) =>
         </div>
       </template>
     </UCard>
+
+    <UModal v-model="isAvailabilityModalOpen">
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-semibold">Set Availability</h3>
+          <p class="text-sm text-gray-500">
+            {{ selectedEmployee?.employeeName }} ({{
+              selectedEmployee?.employeeRole
+            }})
+          </p>
+        </template>
+
+        <form @submit.prevent="setAvailability" class="space-y-4">
+          <UFormGroup label="Date" required>
+            <UInput type="date" v-model="availabilityForm.date" required />
+          </UFormGroup>
+
+          <UFormGroup label="Capacity Hours" required>
+            <UInput
+              type="number"
+              min="0"
+              max="24"
+              step="0.5"
+              v-model.number="availabilityForm.capacityHours"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Note (optional)">
+            <UTextarea
+              v-model="availabilityForm.note"
+              placeholder="Optional note"
+            />
+          </UFormGroup>
+
+          <div class="flex justify-end gap-3 pt-4">
+            <UButton variant="ghost" @click="isAvailabilityModalOpen = false">
+              Cancel
+            </UButton>
+            <UButton type="submit"> Set Availability </UButton>
+          </div>
+        </form>
+      </UCard>
+    </UModal>
   </div>
 </template>
