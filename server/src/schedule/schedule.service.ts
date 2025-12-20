@@ -13,21 +13,21 @@ export class ScheduleService {
     private readonly availabilityService: AvailabilityService,
   ) {}
 
-  async teamSchedule(
+  async getTeamSchedule(
     startDate: string,
     endDate: string,
   ): Promise<TeamScheduleDay[]> {
     // Fetch all employees
     const employees = await this.employeeService.findAll();
 
-    const absences = await this.absenceService.absences(
+    const absences = await this.absenceService.getAbsences(
       undefined,
       startDate,
       endDate,
       AbsenceStatus.APPROVED,
     );
 
-    const availabilities = await this.availabilityService.availabilities(
+    const availabilities = await this.availabilityService.getAvailabilities(
       undefined,
       startDate,
       endDate,

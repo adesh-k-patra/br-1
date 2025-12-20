@@ -13,7 +13,7 @@ export class AvailabilityService {
     private employeeService: EmployeeService,
   ) {}
 
-  async availabilities(
+  async getAvailabilities(
     employeeId?: string,
     startDate?: string,
     endDate?: string,

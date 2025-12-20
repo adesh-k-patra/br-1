@@ -10,14 +10,19 @@ import { RoleGuard } from '../auth/role.guard';
 export class AbsenceResolver {
   constructor(private absenceService: AbsenceService) {}
 
-  @Query(() => [Absence])
-  async absences(
+  @Query(() => [Absence], { name: 'absences' })
+  async getAbsences(
     @Args('employeeId', { type: () => ID, nullable: true }) employeeId?: string,
     @Args('startDate', { nullable: true }) startDate?: string,
     @Args('endDate', { nullable: true }) endDate?: string,
     @Args('status', { nullable: true }) status?: AbsenceStatus,
   ): Promise<Absence[]> {
-    return this.absenceService.absences(employeeId, startDate, endDate, status);
+    return this.absenceService.getAbsences(
+      employeeId,
+      startDate,
+      endDate,
+      status,
+    );
   }
 
   @Mutation(() => Absence)

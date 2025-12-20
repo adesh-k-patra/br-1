@@ -6,11 +6,11 @@ import { TeamScheduleDay } from './schedule.types';
 export class ScheduleResolver {
   constructor(private scheduleService: ScheduleService) {}
 
-  @Query(() => [TeamScheduleDay])
-  async teamSchedule(
+  @Query(() => [TeamScheduleDay], { name: 'teamSchedule' })
+  async getTeamSchedule(
     @Args('startDate') startDate: string,
     @Args('endDate') endDate: string,
   ): Promise<TeamScheduleDay[]> {
-    return this.scheduleService.teamSchedule(startDate, endDate);
+    return this.scheduleService.getTeamSchedule(startDate, endDate);
   }
 }

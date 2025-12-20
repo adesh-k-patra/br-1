@@ -17,7 +17,7 @@ export class AbsenceService {
     private employeeService: EmployeeService,
   ) {}
 
-  async absences(
+  async getAbsences(
     employeeId?: string,
     startDate?: string,
     endDate?: string,

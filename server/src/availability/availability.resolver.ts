@@ -10,13 +10,13 @@ import { RoleGuard } from '../auth/role.guard';
 export class AvailabilityResolver {
   constructor(private availabilityService: AvailabilityService) {}
 
-  @Query(() => [Availability])
-  async availabilities(
+  @Query(() => [Availability], { name: 'availabilities' })
+  async getAvailabilities(
     @Args('employeeId', { type: () => ID, nullable: true }) employeeId?: string,
     @Args('startDate', { nullable: true }) startDate?: string,
     @Args('endDate', { nullable: true }) endDate?: string,
   ): Promise<Availability[]> {
-    return this.availabilityService.availabilities(
+    return this.availabilityService.getAvailabilities(
       employeeId,
       startDate,
       endDate,
@@ -26,7 +26,7 @@ export class AvailabilityResolver {
   @Mutation(() => Availability)
   @UseGuards(RoleGuard)
   @Roles('manager')
-  async createAvailability(
+  async setAvailability(
     @Args('input') input: SetAvailabilityInput,
   ): Promise<Availability> {
     return this.availabilityService.setAvailability(input);
