@@ -9,6 +9,7 @@ import { JwtGuard } from './auth/jwt.guard';
 import { EmployeeModule } from './employee/employee.module';
 import { AvailabilityModule } from './availability/availability.module';
 import { AbsenceModule } from './absence/absence.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AbsenceModule } from './absence/absence.module';
     EmployeeModule,
     AvailabilityModule,
     AbsenceModule,
+    ScheduleModule,
   ],
   providers: [
     {
