@@ -3,6 +3,6 @@ import { AvailabilityService } from './availability.service';
 import { AvailabilityResolver } from './availability.resolver';
 
 @Module({
-  providers: [AvailabilityService, AvailabilityResolver]
+  providers: [AvailabilityService, AvailabilityResolver],
 })
 export class AvailabilityModule {}

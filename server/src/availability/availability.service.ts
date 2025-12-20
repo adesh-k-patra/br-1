@@ -1,4 +1,73 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Availability } from './availability.entity';
+import { EmployeeService } from '../employee/employee.service';
+import { SetAvailabilityInput } from './availability.input';
 
 @Injectable()
-export class AvailabilityService {}
+export class AvailabilityService {
+  constructor(
+    @InjectRepository(Availability)
+    private availabilityRepository: Repository<Availability>,
+    private employeeService: EmployeeService,
+  ) {}
+
+  async availabilities(
+    employeeId?: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<Availability[]> {
+    const where: Record<string, any> = {};
+
+    if (employeeId) {
+      where.employeeId = employeeId;
+    }
+
+    if (startDate && endDate) {
+      where.date = Between(startDate, endDate);
+    } else if (startDate) {
+      where.date = MoreThanOrEqual(startDate);
+    } else if (endDate) {
+      where.date = LessThanOrEqual(endDate);
+    }
+
+    return this.availabilityRepository.find({
+      where,
+      relations: ['employee'],
+      order: { date: 'DESC' },
+    });
+  }
+
+  async setAvailability(input: SetAvailabilityInput): Promise<Availability> {
+    const existing = await this.availabilityRepository.findOne({
+      where: {
+        employeeId: input.employeeId,
+        date: input.date,
+      },
+    });
+
+    if (existing) {
+      existing.capacityHours = input.capacityHours;
+      existing.note = input.note;
+      return this.availabilityRepository.save(existing);
+    }
+
+    const availability = this.availabilityRepository.create({
+      employeeId: input.employeeId,
+      date: input.date,
+      capacityHours: input.capacityHours,
+      note: input.note,
+    });
+
+    return this.availabilityRepository.save(availability);
+  }
+
+  async deleteAvailability(id: string): Promise<boolean> {
+    const result = await this.availabilityRepository.delete({ id });
+    if (result.affected === 0) {
+      throw new NotFoundException('Availability not found');
+    }
+    return true;
+  }
+}
