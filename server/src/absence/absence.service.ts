@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Absence, AbsenceStatus } from './absence.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { RecordAbsenceInput, UpdateAbsenceStatusInput } from './absence.input';
@@ -17,14 +17,39 @@ export class AbsenceService {
     private employeeService: EmployeeService,
   ) {}
 
-  async findAll(): Promise<Absence[]> {
+  async absences(
+    employeeId?: string,
+    startDate?: string,
+    endDate?: string,
+    status?: AbsenceStatus,
+  ): Promise<Absence[]> {
+    const where: Record<string, any> = {};
+
+    if (employeeId) {
+      where.employeeId = employeeId;
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (startDate && endDate) {
+      where.startDate = LessThanOrEqual(endDate);
+      where.endDate = MoreThanOrEqual(startDate);
+    } else if (startDate) {
+      where.endDate = MoreThanOrEqual(startDate);
+    } else if (endDate) {
+      where.startDate = LessThanOrEqual(endDate);
+    }
+
     return this.absenceRepository.find({
+      where,
       relations: ['employee'],
       order: { startDate: 'DESC' },
     });
   }
 
-  async record(input: RecordAbsenceInput): Promise<Absence> {
+  async recordAbsence(input: RecordAbsenceInput): Promise<Absence> {
     await this.employeeService.findOne(input.employeeId);
 
     if (new Date(input.startDate) > new Date(input.endDate)) {
@@ -51,7 +76,7 @@ export class AbsenceService {
     return this.absenceRepository.save(absence);
   }
 
-  async updateStatus(input: UpdateAbsenceStatusInput): Promise<Absence> {
+  async updateAbsenceStatus(input: UpdateAbsenceStatusInput): Promise<Absence> {
     const absence = await this.absenceRepository.findOne({
       where: { id: input.absenceId },
     });
@@ -70,7 +95,7 @@ export class AbsenceService {
     return this.absenceRepository.save(absence);
   }
 
-  async delete(id: string): Promise<boolean> {
+  async deleteAbsence(id: string): Promise<boolean> {
     const result = await this.absenceRepository.delete({ id });
     if (result.affected === 0) {
       throw new NotFoundException('Absence not found');

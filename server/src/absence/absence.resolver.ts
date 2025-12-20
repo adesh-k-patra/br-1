@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { Absence } from './absence.entity';
+import { Absence, AbsenceStatus } from './absence.entity';
 import { AbsenceService } from './absence.service';
 import { RecordAbsenceInput, UpdateAbsenceStatusInput } from './absence.input';
 import { Roles } from '../auth/role.decorator';
@@ -10,9 +10,14 @@ import { RoleGuard } from '../auth/role.guard';
 export class AbsenceResolver {
   constructor(private absenceService: AbsenceService) {}
 
-  @Query(() => [Absence], { name: 'absences' })
-  async getAbsences(): Promise<Absence[]> {
-    return this.absenceService.findAll();
+  @Query(() => [Absence])
+  async absences(
+    @Args('employeeId', { type: () => ID, nullable: true }) employeeId?: string,
+    @Args('startDate', { nullable: true }) startDate?: string,
+    @Args('endDate', { nullable: true }) endDate?: string,
+    @Args('status', { nullable: true }) status?: AbsenceStatus,
+  ): Promise<Absence[]> {
+    return this.absenceService.absences(employeeId, startDate, endDate, status);
   }
 
   @Mutation(() => Absence)
@@ -21,7 +26,7 @@ export class AbsenceResolver {
   async recordAbsence(
     @Args('input') input: RecordAbsenceInput,
   ): Promise<Absence> {
-    return this.absenceService.record(input);
+    return this.absenceService.recordAbsence(input);
   }
 
   @Mutation(() => Absence)
@@ -30,7 +35,7 @@ export class AbsenceResolver {
   async updateAbsenceStatus(
     @Args('input') input: UpdateAbsenceStatusInput,
   ): Promise<Absence> {
-    return this.absenceService.updateStatus(input);
+    return this.absenceService.updateAbsenceStatus(input);
   }
 
   @Mutation(() => Boolean)
@@ -39,6 +44,6 @@ export class AbsenceResolver {
   async deleteAbsence(
     @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {
-    return this.absenceService.delete(id);
+    return this.absenceService.deleteAbsence(id);
   }
 }
