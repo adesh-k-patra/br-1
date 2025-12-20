@@ -18,6 +18,18 @@ export class JwtGuard implements CanActivate {
       throw new UnauthorizedException('Request context missing');
     }
 
+    // Dev Mode
+    if (process.env.AUTH_MODE === 'dev') {
+      request.user = {
+        sub: 'dev-user',
+        email: 'dev@local.test',
+        role: ['manager'],
+        scope: 'all',
+      } satisfies JwtPayload;
+
+      return true;
+    }
+
     const authHeader = request.headers.authorization;
     if (!authHeader) {
       throw new UnauthorizedException('Authorization header required');

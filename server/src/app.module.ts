@@ -10,6 +10,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { AvailabilityModule } from './availability/availability.module';
 import { AbsenceModule } from './absence/absence.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -25,6 +26,10 @@ import { ScheduleModule } from './schedule/schedule.module';
       database: 'data/sqlite.db',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       synchronize: true,
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
     EmployeeModule,
     AvailabilityModule,
