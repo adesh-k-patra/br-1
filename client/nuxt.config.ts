@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  modules: ["@nuxt/ui", "@nuxtjs/apollo", "@nuxtjs/tailwindcss"],
+  modules: ["@nuxt/ui", "@nuxtjs/apollo"],
 
   apollo: {
     clients: {

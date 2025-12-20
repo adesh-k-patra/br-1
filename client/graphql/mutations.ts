@@ -3,7 +3,7 @@ import gql from "graphql-tag"
 export const CREATE_EMPLOYEE = gql`
   mutation CreateEmployee($input: CreateEmployeeInput!) {
     createEmployee(input: $input) {
-      id
+      email
       name
       role
       defaultDailyCapacityHours
@@ -15,6 +15,7 @@ export const UPDATE_EMPLOYEE = gql`
   mutation UpdateEmployee($input: UpdateEmployeeInput!) {
     updateEmployee(input: $input) {
       id
+      email
       name
       role
       defaultDailyCapacityHours
