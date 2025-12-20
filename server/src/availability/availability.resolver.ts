@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  GraphQLISODateTime,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Availability } from './availability.entity';
 import { AvailabilityService } from './availability.service';
@@ -13,8 +20,10 @@ export class AvailabilityResolver {
   @Query(() => [Availability], { name: 'availabilities' })
   async getAvailabilities(
     @Args('employeeId', { type: () => ID, nullable: true }) employeeId?: string,
-    @Args('startDate', { nullable: true }) startDate?: string,
-    @Args('endDate', { nullable: true }) endDate?: string,
+    @Args('startDate', { type: () => GraphQLISODateTime, nullable: true })
+    startDate?: Date,
+    @Args('endDate', { type: () => GraphQLISODateTime, nullable: true })
+    endDate?: Date,
   ): Promise<Availability[]> {
     return this.availabilityService.getAvailabilities(
       employeeId,

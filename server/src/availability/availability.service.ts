@@ -15,8 +15,8 @@ export class AvailabilityService {
 
   async getAvailabilities(
     employeeId?: string,
-    startDate?: string,
-    endDate?: string,
+    startDate?: Date,
+    endDate?: Date,
   ): Promise<Availability[]> {
     const where: Record<string, any> = {};
 
@@ -52,17 +52,27 @@ export class AvailabilityService {
     if (existing) {
       existing.capacityHours = input.capacityHours;
       existing.note = input.note;
-      return this.availabilityRepository.save(existing);
+      await this.availabilityRepository.save(existing);
+
+      return (await this.availabilityRepository.findOne({
+        where: { id: existing.id },
+        relations: ['employee'],
+      }))!;
     }
 
-    const availability = this.availabilityRepository.create({
-      employeeId: input.employeeId,
-      date: input.date,
-      capacityHours: input.capacityHours,
-      note: input.note,
-    });
+    const availability = await this.availabilityRepository.save(
+      this.availabilityRepository.create({
+        employeeId: input.employeeId,
+        date: input.date,
+        capacityHours: input.capacityHours,
+        note: input.note,
+      }),
+    );
 
-    return this.availabilityRepository.save(availability);
+    return (await this.availabilityRepository.findOne({
+      where: { id: availability.id },
+      relations: ['employee'],
+    }))!;
   }
 
   async deleteAvailability(id: string): Promise<boolean> {

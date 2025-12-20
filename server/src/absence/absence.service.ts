@@ -19,8 +19,8 @@ export class AbsenceService {
 
   async getAbsences(
     employeeId?: string,
-    startDate?: string,
-    endDate?: string,
+    startDate?: Date,
+    endDate?: Date,
     status?: AbsenceStatus,
   ): Promise<Absence[]> {
     const where: Record<string, any> = {};
@@ -63,17 +63,24 @@ export class AbsenceService {
       input.startDate,
       input.endDate,
     );
+
     if (overlapping.length > 0) {
       throw new BadRequestException(
         'An absence already exists for the overlapping dates',
       );
     }
 
-    const absence = this.absenceRepository.create({
-      ...input,
-      status: AbsenceStatus.APPROVED,
-    });
-    return this.absenceRepository.save(absence);
+    const absence = await this.absenceRepository.save(
+      this.absenceRepository.create({
+        ...input,
+        status: AbsenceStatus.APPROVED,
+      }),
+    );
+
+    return (await this.absenceRepository.findOne({
+      where: { id: absence.id },
+      relations: ['employee'],
+    }))!;
   }
 
   async updateAbsenceStatus(input: UpdateAbsenceStatusInput): Promise<Absence> {

@@ -14,8 +14,8 @@ export class ScheduleService {
   ) {}
 
   async getTeamSchedule(
-    startDate: string,
-    endDate: string,
+    startDate: Date,
+    endDate: Date,
   ): Promise<TeamScheduleDay[]> {
     // Fetch all employees
     const employees = await this.employeeService.findAll();
@@ -71,7 +71,7 @@ export class ScheduleService {
         const availability = availabilityMap.get(`${employee.id}_${date}`);
 
         const capacityHours =
-          availability?.capacityHours ?? employee.defaultDailyCapacity;
+          availability?.capacityHours ?? employee.defaultDailyCapacityHours;
 
         return {
           employee,
