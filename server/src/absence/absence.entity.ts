@@ -68,7 +68,7 @@ export class Absence {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  comment: string;
+  comment?: string;
 
   @Field()
   @CreateDateColumn()

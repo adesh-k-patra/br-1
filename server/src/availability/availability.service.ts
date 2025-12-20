@@ -40,6 +40,8 @@ export class AvailabilityService {
   }
 
   async setAvailability(input: SetAvailabilityInput): Promise<Availability> {
+    await this.employeeService.findOne(input.employeeId);
+
     const existing = await this.availabilityRepository.findOne({
       where: {
         employeeId: input.employeeId,

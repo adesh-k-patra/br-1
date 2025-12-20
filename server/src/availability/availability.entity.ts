@@ -42,7 +42,7 @@ export class Availability {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  note: string;
+  note?: string;
 
   @Field()
   @CreateDateColumn()

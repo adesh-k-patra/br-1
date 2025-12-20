@@ -22,7 +22,7 @@ export class RecordAbsenceInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  comment: string;
+  comment?: string;
 }
 
 @InputType()
@@ -41,7 +41,7 @@ export class RequestAbsenceInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  comment: string;
+  comment?: string;
 }
 
 @InputType()
