@@ -17,7 +17,7 @@ export class CreateEmployeeInput {
 
   @Field(() => Float, { defaultValue: 8 })
   @Min(0)
-  defaultDailyCapacity: number;
+  defaultDailyCapacityHours: number;
 }
 
 @InputType()

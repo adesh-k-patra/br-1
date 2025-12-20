@@ -31,7 +31,7 @@ export class Employee {
 
   @Field(() => Float)
   @Column({ type: 'float', default: 8 })
-  defaultDailyCapacity: number;
+  defaultDailyCapacityHours: number;
 
   @Field(() => [Absence])
   @OneToMany(() => Absence, (absence) => absence.employee, { cascade: true })
