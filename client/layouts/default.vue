@@ -1,0 +1,63 @@
+<template>
+  <div>
+    <header class="bg-white shadow-sm border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center gap-4">
+            <NuxtLink to="/" class="flex items-center gap-2">
+              <span class="font-bold text-xl text-gray-900"
+                >Team Scheduling</span
+              >
+            </NuxtLink>
+          </div>
+
+          <nav class="flex items-center gap-6">
+            <NuxtLink
+              to="/"
+              class="text-gray-600 hover:text-gray-900 font-medium"
+              active-class="text-brick-orange"
+            >
+              Dashboard
+            </NuxtLink>
+            <NuxtLink
+              to="/employees"
+              class="text-gray-600 hover:text-gray-900 font-medium"
+              active-class="text-brick-orange"
+            >
+              Employees
+            </NuxtLink>
+            <NuxtLink
+              to="/schedule"
+              class="text-gray-600 hover:text-gray-900 font-medium"
+              active-class="text-brick-orange"
+            >
+              Schedule
+            </NuxtLink>
+            <NuxtLink
+              to="/absences"
+              class="text-gray-600 hover:text-gray-900 font-medium"
+              active-class="text-brick-orange"
+            >
+              Absences
+            </NuxtLink>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <slot />
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex justify-between items-center text-sm text-gray-500">
+          <div class="flex items-center gap-2">
+            <span>Brickcode</span>
+          </div>
+          <span>Team Scheduling Brick</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</template>
