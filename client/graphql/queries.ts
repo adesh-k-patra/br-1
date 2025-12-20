@@ -83,7 +83,7 @@ export const GET_AVAILABILITIES = gql`
   }
 `
 export const GET_TEAM_SCHEDULE = gql`
-  query GetTeamSchedule($startDate: Date!, $endDate: Date!) {
+  query GetTeamSchedule($startDate: DateTime!, $endDate: DateTime!) {
     teamSchedule(startDate: $startDate, endDate: $endDate) {
       date
       employees {
