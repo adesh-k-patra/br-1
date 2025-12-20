@@ -1,10 +1,39 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/ui'],
-  css: ['../assets/css/main.css'],
-  devServer: {
-    port: 3001,
+
+  modules: ["@nuxt/ui", "@nuxtjs/apollo", "@nuxtjs/tailwindcss"],
+
+  apollo: {
+    clients: {
+      default: {
+        httpEndpoint: "http://localhost:3001/graphql",
+      },
+    },
   },
+
+  runtimeConfig: {
+    public: {
+      apiUrl: "http://localhost:3001/graphql",
+    },
+  },
+
+  app: {
+    head: {
+      title: "Team Scheduling Brick",
+      meta: [
+        { charset: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        {
+          name: "description",
+          content: "Team Scheduling Brick - Manage team absences and capacity",
+        },
+      ],
+    },
+  },
+
+  colorMode: {
+    preference: "light",
+  },
+
+  compatibilityDate: "2024-11-01",
 })
