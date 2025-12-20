@@ -40,8 +40,8 @@ export const GET_EMPLOYEE = gql`
 export const GET_ABSENCES = gql`
   query GetAbsences(
     $employeeId: ID
-    $startDate: Date
-    $endDate: Date
+    $startDate: DateTime
+    $endDate: DateTime
     $status: AbsenceStatus
   ) {
     absences(
