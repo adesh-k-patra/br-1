@@ -13,7 +13,7 @@ export class ScheduleService {
     private readonly availabilityService: AvailabilityService,
   ) {}
 
-  async getTeamSchedule(
+  async teamSchedule(
     startDate: string,
     endDate: string,
   ): Promise<TeamScheduleDay[]> {
