@@ -153,7 +153,7 @@ const columns = [
         </template>
 
         <template #capacity-data="{ row }">
-          ({{ row.defaultDailyCapacityHours }}h/day)
+          {{ row.defaultDailyCapacityHours }}h/day
         </template>
 
         <template #actions-data="{ row }">

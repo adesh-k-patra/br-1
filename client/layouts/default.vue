@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-screen flex flex-col">
     <header class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -12,13 +12,6 @@
           </div>
 
           <nav class="flex items-center gap-6">
-            <NuxtLink
-              to="/"
-              class="text-gray-600 hover:text-gray-900 font-medium"
-              active-class="text-brick-orange"
-            >
-              Dashboard
-            </NuxtLink>
             <NuxtLink
               to="/employees"
               class="text-gray-600 hover:text-gray-900 font-medium"
@@ -45,8 +38,10 @@
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <slot />
+    <main class="flex-1">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <slot />
+      </div>
     </main>
 
     <footer class="bg-white border-t border-gray-200 mt-auto">

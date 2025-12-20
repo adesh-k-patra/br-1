@@ -73,8 +73,6 @@ const resetForm = () => {
 // Create absence
 const createAbsence = async () => {
   try {
-    console.log("Here")
-    console.log(form.value)
     await apolloClient.mutate({
       mutation: RECORD_ABSENCE,
       variables: { input: form.value },
