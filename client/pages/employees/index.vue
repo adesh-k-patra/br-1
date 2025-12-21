@@ -75,6 +75,8 @@ const saveEmployee = async () => {
             ...form.value,
           },
         },
+        refetchQueries: [{ query: GET_EMPLOYEES }],
+        awaitRefetchQueries: true,
       })
       toast.add({ title: "Employee updated successfully", color: "green" })
     } else {
@@ -83,6 +85,8 @@ const saveEmployee = async () => {
         variables: {
           input: form.value,
         },
+        refetchQueries: [{ query: GET_EMPLOYEES }],
+        awaitRefetchQueries: true,
       })
       toast.add({ title: "Employee created successfully", color: "green" })
     }
@@ -101,6 +105,8 @@ const deleteEmployee = async () => {
       variables: {
         id: deletingEmployee.value.id,
       },
+      refetchQueries: [{ query: GET_EMPLOYEES }],
+      awaitRefetchQueries: true,
     })
     toast.add({ title: "Employee deleted successfully", color: "green" })
     isDeleteModalOpen.value = false

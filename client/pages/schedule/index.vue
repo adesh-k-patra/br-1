@@ -49,7 +49,10 @@ const variables = computed(() => ({
   endDate: dateRange.value.end,
 }))
 
-const { data: scheduleData } = await useAsyncQuery(GET_TEAM_SCHEDULE, variables)
+const { data: scheduleData, refresh } = await useAsyncQuery(
+  GET_TEAM_SCHEDULE,
+  variables
+)
 
 const teamSchedule = computed(() => scheduleData.value?.teamSchedule ?? [])
 const days = computed(() => teamSchedule.value.map((d) => parseISO(d.date)))
@@ -131,7 +134,16 @@ const setAvailability = async () => {
           note: availabilityForm.value.note || null,
         },
       },
+      refetchQueries: [
+        {
+          query: GET_TEAM_SCHEDULE,
+          variables: variables.value,
+        },
+      ],
+      awaitRefetchQueries: true,
     })
+
+    await refresh()
 
     toast.add({
       title: "Availability set",

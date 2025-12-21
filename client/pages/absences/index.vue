@@ -76,12 +76,14 @@ const createAbsence = async () => {
     await apolloClient.mutate({
       mutation: RECORD_ABSENCE,
       variables: { input: form.value },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
     })
 
     toast.add({ title: "Absence recorded successfully", color: "green" })
     isCreateModalOpen.value = false
     resetForm()
-    await refreshAbsences({ force: true })
+    await refreshAbsences()
   } catch (error: any) {
     toast.add({ title: "Error", description: error.message, color: "red" })
   }
@@ -95,10 +97,12 @@ const approveAbsence = async (absenceId: string) => {
       variables: {
         input: { absenceId, status: "APPROVED" },
       },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
     })
 
     toast.add({ title: "Absence approved", color: "green" })
-    await refreshAbsences({ force: true })
+    await refreshAbsences()
   } catch (error: any) {
     toast.add({ title: "Error", description: error.message, color: "red" })
   }
@@ -111,10 +115,12 @@ const rejectAbsence = async (absenceId: string) => {
       variables: {
         input: { absenceId, status: "REJECTED" },
       },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
     })
 
     toast.add({ title: "Absence rejected", color: "yellow" })
-    await refreshAbsences({ force: true })
+    await refreshAbsences()
   } catch (error: any) {
     toast.add({ title: "Error", description: error.message, color: "red" })
   }
@@ -126,10 +132,12 @@ const deleteAbsence = async (id: string) => {
     await apolloClient.mutate({
       mutation: DELETE_ABSENCE,
       variables: { id },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
     })
 
     toast.add({ title: "Absence deleted", color: "green" })
-    await refreshAbsences({ force: true })
+    await refreshAbsences()
   } catch (error: any) {
     toast.add({ title: "Error", description: error.message, color: "red" })
   }
