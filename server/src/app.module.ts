@@ -11,15 +11,28 @@ import { AvailabilityModule } from './availability/availability.module';
 import { AbsenceModule } from './absence/absence.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { ConfigModule } from '@nestjs/config';
+import { createLoaders } from './common/loaders';
+import { AbsenceService } from './absence/absence.service';
+import { AvailabilityService } from './availability/availability.service';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      sortSchema: true,
-      playground: true,
-      context: ({ req }: { req: Request }) => ({ req }),
+      imports: [AbsenceModule, AvailabilityModule],
+      useFactory: (
+        absenceService: AbsenceService,
+        availabilityService: AvailabilityService,
+      ) => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        playground: true,
+        context: ({ req }: { req: Request }) => ({
+          req,
+          loaders: createLoaders(absenceService, availabilityService),
+        }),
+      }),
+      inject: [AbsenceService, AvailabilityService],
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',

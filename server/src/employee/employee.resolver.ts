@@ -1,10 +1,22 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+  Context,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeInput, UpdateEmployeeInput } from './employee.input';
 import { Roles } from '../auth/role.decorator';
 import { RoleGuard } from '../auth/role.guard';
+import { Absence } from 'src/absence/absence.entity';
+import type { IGraphQLContext } from 'src/common/loaders';
+import { Availability } from 'src/availability/availability.entity';
 
 @Resolver(() => Employee)
 export class EmployeeResolver {
@@ -47,5 +59,21 @@ export class EmployeeResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<boolean> {
     return this.employeeService.delete(id);
+  }
+
+  @ResolveField(() => [Absence])
+  async absences(
+    @Parent() employee: Employee,
+    @Context() context: IGraphQLContext,
+  ): Promise<Absence[]> {
+    return context.loaders.absences.load(employee.id);
+  }
+
+  @ResolveField(() => [Availability])
+  async availabilities(
+    @Parent() employee: Employee,
+    @Context() context: IGraphQLContext,
+  ): Promise<Availability[]> {
+    return context.loaders.availabilities.load(employee.id);
   }
 }
