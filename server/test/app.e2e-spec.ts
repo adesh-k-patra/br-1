@@ -1,25 +1,49 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { App } from 'supertest/types';
+import request from 'supertest';
+import type { Server } from 'http';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+interface EmployeesQueryResponse {
+  data: {
+    employees: Array<{
+      id: string;
+      name: string;
+      email: string;
+    }>;
+  };
+}
 
-  beforeEach(async () => {
+describe('AppController (e2e)', () => {
+  let app: INestApplication;
+  let server: Server;
+
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    server = app.getHttpServer() as Server;
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  it('GraphQL (Query employees)', async () => {
+    const res = await request(server)
+      .post('/graphql')
+      .send({
+        query: `{ employees { id name email } }`,
+      })
+      .expect(200);
+
+    const body = res.body as EmployeesQueryResponse;
+
+    expect(body.data.employees).toHaveLength(body.data.employees.length);
+    expect(Array.isArray(body.data.employees)).toBe(true);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
