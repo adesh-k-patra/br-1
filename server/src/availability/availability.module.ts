@@ -1,12 +1,18 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AvailabilityService } from './availability.service';
 import { AvailabilityResolver } from './availability.resolver';
-import { EmployeeModule } from 'src/employee/employee.module';
+import { EmployeeModule } from '../employee/employee.module';
 import { Availability } from './availability.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Absence } from '../absence/absence.entity';
+import { AbsenceModule } from 'src/absence/absence.module';
 
 @Module({
-  imports: [EmployeeModule, TypeOrmModule.forFeature([Availability])],
+  imports: [
+    forwardRef(() => EmployeeModule),
+    forwardRef(() => AbsenceModule),
+    TypeOrmModule.forFeature([Availability, Absence]),
+  ],
   providers: [AvailabilityService, AvailabilityResolver],
   exports: [AvailabilityService],
 })

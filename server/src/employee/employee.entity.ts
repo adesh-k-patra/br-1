@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
-import { Absence } from 'src/absence/absence.entity';
-import { Availability } from 'src/availability/availability.entity';
+import { Absence } from '../absence/absence.entity';
+import { Availability } from '../availability/availability.entity';
 
 @ObjectType()
 @Entity('employees')
