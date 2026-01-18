@@ -1,15 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import {
+  Between,
+  In,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { Availability } from './availability.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { SetAvailabilityInput } from './availability.input';
+import { AbsenceService } from 'src/absence/absence.service';
 
 @Injectable()
 export class AvailabilityService {
   constructor(
     @InjectRepository(Availability)
     private availabilityRepository: Repository<Availability>,
+    private absenceService: AbsenceService,
     private employeeService: EmployeeService,
   ) {}
 
@@ -39,8 +51,28 @@ export class AvailabilityService {
     });
   }
 
+  async getAvailabilitiesByEmployeeIds(
+    employeeIds: string[],
+  ): Promise<Availability[]> {
+    return this.availabilityRepository.find({
+      where: { employeeId: In(employeeIds) },
+      order: { date: 'DESC' },
+    });
+  }
+
   async setAvailability(input: SetAvailabilityInput): Promise<Availability> {
     await this.employeeService.findOne(input.employeeId);
+
+    const hasAbsence = await this.absenceService.hasApprovedAbsenceOnDate(
+      input.employeeId,
+      input.date,
+    );
+
+    if (hasAbsence) {
+      throw new BadRequestException(
+        `Conflict with absence: Availability set on a fully absent day (${input.date})`,
+      );
+    }
 
     const existing = await this.availabilityRepository.findOne({
       where: {
