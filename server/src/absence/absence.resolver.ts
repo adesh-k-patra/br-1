@@ -52,6 +52,7 @@ export class AbsenceResolver {
 
   @Mutation(() => Absence)
   @UseGuards(RoleGuard)
+  @Roles('manager', 'employee')
   async requestAbsence(
     @CurrentUser() user: JwtPayload,
     @Args('input') input: RequestAbsenceInput,
