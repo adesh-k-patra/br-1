@@ -9,9 +9,15 @@ import {
 import { UseGuards } from '@nestjs/common';
 import { Absence, AbsenceStatus } from './absence.entity';
 import { AbsenceService } from './absence.service';
-import { RecordAbsenceInput, UpdateAbsenceStatusInput } from './absence.input';
+import {
+  RecordAbsenceInput,
+  RequestAbsenceInput,
+  UpdateAbsenceStatusInput,
+} from './absence.input';
 import { Roles } from '../auth/role.decorator';
 import { RoleGuard } from '../auth/role.guard';
+import type { JwtPayload } from 'src/auth/jwt-payload.interface';
+import { CurrentUser } from 'src/auth/current-user.decorator';
 
 @Resolver(() => Absence)
 export class AbsenceResolver {
@@ -42,6 +48,15 @@ export class AbsenceResolver {
     @Args('input') input: RecordAbsenceInput,
   ): Promise<Absence> {
     return this.absenceService.recordAbsence(input);
+  }
+
+  @Mutation(() => Absence)
+  @UseGuards(RoleGuard)
+  async requestAbsence(
+    @CurrentUser() user: JwtPayload,
+    @Args('input') input: RequestAbsenceInput,
+  ): Promise<Absence> {
+    return this.absenceService.requestAbsence(user.sub, input);
   }
 
   @Mutation(() => Absence)
