@@ -3,6 +3,8 @@ import { format } from "date-fns"
 
 const props = defineProps<{
   absence: any
+  showEmployee?: boolean
+  showApprovalActions?: boolean
 }>()
 
 const emit = defineEmits(["approve", "reject", "delete"])
@@ -32,7 +34,7 @@ const getTypeLabel = (type: string) => {
     <div class="flex justify-between items-start">
       <div class="flex-1">
         <div class="flex items-center gap-3 mb-2">
-          <span class="font-semibold text-gray-900">{{
+          <span v-if="showEmployee" class="font-semibold text-gray-900">{{
             absence.employee?.name
           }}</span>
           <UBadge :color="getStatusColor(absence.status)" variant="soft">
@@ -53,7 +55,7 @@ const getTypeLabel = (type: string) => {
       </div>
 
       <div class="flex gap-2">
-        <template v-if="absence.status === 'REQUESTED'">
+        <template v-if="showApprovalActions && absence.status === 'REQUESTED'">
           <UButton
             icon="i-heroicons-check"
             size="sm"

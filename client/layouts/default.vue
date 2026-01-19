@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { user, isAuthenticated, logout } = useAuth()
+</script>
+
 <template>
   <div class="min-h-screen flex flex-col">
     <header class="bg-white shadow-sm border-b border-gray-200">
@@ -12,27 +16,42 @@
           </div>
 
           <nav class="flex items-center gap-6">
-            <NuxtLink
-              to="/employees"
-              class="text-gray-600 hover:text-gray-900 font-medium"
-              active-class="text-brick-orange"
-            >
-              Employees
-            </NuxtLink>
-            <NuxtLink
-              to="/schedule"
-              class="text-gray-600 hover:text-gray-900 font-medium"
-              active-class="text-brick-orange"
-            >
-              Schedule
-            </NuxtLink>
-            <NuxtLink
-              to="/absences"
-              class="text-gray-600 hover:text-gray-900 font-medium"
-              active-class="text-brick-orange"
-            >
-              Absences
-            </NuxtLink>
+            <template v-if="user?.role === 'manager'">
+              <NuxtLink
+                to="/employees"
+                class="text-gray-600 hover:text-gray-900 font-medium"
+                active-class="text-brick-orange"
+              >
+                Employees
+              </NuxtLink>
+              <NuxtLink
+                to="/schedule"
+                class="text-gray-600 hover:text-gray-900 font-medium"
+                active-class="text-brick-orange"
+              >
+                Schedule
+              </NuxtLink>
+              <NuxtLink
+                to="/absences"
+                class="text-gray-600 hover:text-gray-900 font-medium"
+                active-class="text-brick-orange"
+              >
+                Absences
+              </NuxtLink>
+            </template>
+            <template v-else-if="user?.role === 'employee'">
+              <NuxtLink
+                to="/my-absences"
+                class="text-gray-600 hover:text-gray-900 font-medium"
+                active-class="text-brick-orange"
+              >
+                My Absences
+              </NuxtLink>
+            </template>
+
+            <UButton v-if="isAuthenticated" color="red" @click="logout">
+              Logout
+            </UButton>
           </nav>
         </div>
       </div>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 const props = defineProps<{
-  employees: any[]
+  employees?: any[]
+  isEmployeeView?: boolean
 }>()
 
 const emit = defineEmits(["save", "cancel"])
 
 const form = ref({
-  employeeId: "",
+  employeeId: props.isEmployeeView ? undefined : "",
   type: "PAID_LEAVE",
   startDate: "",
   endDate: "",
@@ -29,10 +30,10 @@ const submitForm = () => {
 
 <template>
   <form @submit.prevent="submitForm" class="space-y-4">
-    <UFormGroup label="Employee" required>
+    <UFormGroup v-if="!isEmployeeView" label="Employee" required>
       <USelectMenu
         v-model="form.employeeId"
-        :options="employees.map((e: any) => ({ label: e.name, value: e.id }))"
+        :options="employees?.map((e: any) => ({ label: e.name, value: e.id })) || []"
         value-attribute="value"
         option-attribute="label"
         placeholder="Select employee"

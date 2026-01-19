@@ -46,6 +46,19 @@ export const RECORD_ABSENCE = gql`
   }
 `
 
+export const REQUEST_ABSENCE = gql`
+  mutation RequestAbsence($input: RequestAbsenceInput!) {
+    requestAbsence(input: $input) {
+      id
+      type
+      status
+      startDate
+      endDate
+      comment
+    }
+  }
+`
+
 export const UPDATE_ABSENCE_STATUS = gql`
   mutation UpdateAbsenceStatus($input: UpdateAbsenceStatusInput!) {
     updateAbsenceStatus(input: $input) {
