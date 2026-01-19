@@ -2,7 +2,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, DeleteResult } from 'typeorm';
+import { Repository, DeleteResult, DataSource, EntityManager } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { Availability } from 'src/availability/availability.entity';
 import { AvailabilityService } from 'src/availability/availability.service';
@@ -15,6 +15,8 @@ describe('AvailabilityService', () => {
   let repository: jest.Mocked<Repository<Availability>>;
   let employeeService: EmployeeService;
   let absenceService: AbsenceService;
+  let dataSource: jest.Mocked<DataSource>;
+  let entityManager: jest.Mocked<EntityManager>;
 
   const mockEmployee: Employee = {
     id: 'emp-1',
@@ -61,6 +63,14 @@ describe('AvailabilityService', () => {
     hasApprovedAbsenceOnDate: jest.fn(),
   } as unknown as AbsenceService;
 
+  const mockEntityManager = {
+    getRepository: jest.fn(),
+  } as unknown as jest.Mocked<EntityManager>;
+
+  const mockDataSource = {
+    transaction: jest.fn(),
+  } as unknown as jest.Mocked<DataSource>;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -77,6 +87,10 @@ describe('AvailabilityService', () => {
           provide: AbsenceService,
           useValue: mockAbsenceService,
         },
+        {
+          provide: DataSource,
+          useValue: mockDataSource,
+        },
       ],
     }).compile();
 
@@ -84,6 +98,19 @@ describe('AvailabilityService', () => {
     repository = module.get(getRepositoryToken(Availability));
     employeeService = module.get<EmployeeService>(EmployeeService);
     absenceService = module.get<AbsenceService>(AbsenceService);
+    dataSource = module.get<DataSource>(DataSource) as jest.Mocked<DataSource>;
+    entityManager = mockEntityManager;
+
+    (dataSource.transaction as jest.Mock).mockImplementation(
+      async (callback: (manager: EntityManager) => Promise<unknown>) => {
+        const result = await callback(entityManager);
+        return result;
+      },
+    );
+
+    entityManager.getRepository.mockReturnValue(
+      mockRepository as unknown as Repository<Availability>,
+    );
   });
 
   afterEach(() => {
@@ -211,6 +238,7 @@ describe('AvailabilityService', () => {
       );
       expect(repository.create).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
+      expect(dataSource.transaction).toHaveBeenCalled();
     });
 
     it('should update existing availability', async () => {
@@ -239,6 +267,7 @@ describe('AvailabilityService', () => {
           note: 'Half day',
         }),
       );
+      expect(dataSource.transaction).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException if employee has approved absence on date', async () => {
@@ -253,6 +282,7 @@ describe('AvailabilityService', () => {
       await expect(service.setAvailability(setInput)).rejects.toThrow(
         /Conflict with absence/,
       );
+      expect(dataSource.transaction).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if employee does not exist', async () => {
@@ -263,6 +293,7 @@ describe('AvailabilityService', () => {
       await expect(service.setAvailability(setInput)).rejects.toThrow(
         NotFoundException,
       );
+      expect(dataSource.transaction).toHaveBeenCalled();
     });
   });
 

@@ -4,7 +4,14 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  In,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { Absence, AbsenceStatus } from './absence.entity';
 import { EmployeeService } from '../employee/employee.service';
 import {
@@ -19,6 +26,7 @@ export class AbsenceService {
     @InjectRepository(Absence)
     private absenceRepository: Repository<Absence>,
     private employeeService: EmployeeService,
+    private dataSource: DataSource,
   ) {}
 
   async getAbsences(
@@ -133,37 +141,43 @@ export class AbsenceService {
   }
 
   async updateAbsenceStatus(input: UpdateAbsenceStatusInput): Promise<Absence> {
-    const absence = await this.absenceRepository.findOne({
-      where: { id: input.absenceId },
-    });
+    return this.dataSource.transaction(async (manager) => {
+      const absenceRepo = manager.getRepository(Absence);
 
-    if (!absence) {
-      throw new NotFoundException('Absence not found');
-    }
-    if (absence.status !== AbsenceStatus.REQUESTED) {
-      throw new BadRequestException('Only REQUESTED absences can be updated');
-    }
-    if (absence.status === input.status) {
-      return absence;
-    }
+      const absence = await absenceRepo.findOne({
+        where: { id: input.absenceId },
+      });
 
-    if (input.status === AbsenceStatus.APPROVED) {
-      const overlapping = await this.findOverlappingApprovedAbsences(
-        absence.employeeId,
-        absence.startDate,
-        absence.endDate,
-        absence.id,
-      );
-
-      if (overlapping.length > 0) {
-        throw new BadRequestException(
-          'Cannot approve absence due to overlapping approved absences',
-        );
+      if (!absence) {
+        throw new NotFoundException('Absence not found');
       }
-    }
+      if (absence.status !== AbsenceStatus.REQUESTED) {
+        throw new BadRequestException('Only REQUESTED absences can be updated');
+      }
+      if (absence.status === input.status) {
+        return absence;
+      }
 
-    absence.status = input.status;
-    return this.absenceRepository.save(absence);
+      if (input.status === AbsenceStatus.APPROVED) {
+        const overlapping =
+          await this.findOverlappingApprovedAbsencesInTransaction(
+            manager,
+            absence.employeeId,
+            absence.startDate,
+            absence.endDate,
+            absence.id,
+          );
+
+        if (overlapping.length > 0) {
+          throw new BadRequestException(
+            'Cannot approve absence due to overlapping approved absences',
+          );
+        }
+      }
+
+      absence.status = input.status;
+      return absenceRepo.save(absence);
+    });
   }
 
   async deleteAbsence(id: string): Promise<boolean> {
@@ -211,13 +225,15 @@ export class AbsenceService {
     return query.getMany();
   }
 
-  private async findOverlappingApprovedAbsences(
+  private async findOverlappingApprovedAbsencesInTransaction(
+    manager: EntityManager,
     employeeId: string,
     startDate: string,
     endDate: string,
     excludeAbsenceId: string,
   ): Promise<Absence[]> {
-    const query = this.absenceRepository
+    const query = manager
+      .getRepository(Absence)
       .createQueryBuilder('absence')
       .where('absence.employeeId = :employeeId', { employeeId })
       .andWhere('absence.status = :approved', {

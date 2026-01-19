@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Between,
+  DataSource,
   In,
   LessThanOrEqual,
   MoreThanOrEqual,
@@ -23,6 +24,7 @@ export class AvailabilityService {
     private availabilityRepository: Repository<Availability>,
     private absenceService: AbsenceService,
     private employeeService: EmployeeService,
+    private dataSource: DataSource,
   ) {}
 
   async getAvailabilities(
@@ -61,50 +63,53 @@ export class AvailabilityService {
   }
 
   async setAvailability(input: SetAvailabilityInput): Promise<Availability> {
-    await this.employeeService.findOne(input.employeeId);
+    return this.dataSource.transaction(async (manager) => {
+      const availabilityRepo = manager.getRepository(Availability);
 
-    const hasAbsence = await this.absenceService.hasApprovedAbsenceOnDate(
-      input.employeeId,
-      input.date,
-    );
+      await this.employeeService.findOne(input.employeeId);
 
-    if (hasAbsence) {
-      throw new BadRequestException(
-        `Conflict with absence: Availability set on a fully absent day (${input.date})`,
+      const hasAbsence = await this.absenceService.hasApprovedAbsenceOnDate(
+        input.employeeId,
+        input.date,
       );
-    }
 
-    const existing = await this.availabilityRepository.findOne({
-      where: {
-        employeeId: input.employeeId,
-        date: input.date,
-      },
-    });
+      if (hasAbsence) {
+        throw new BadRequestException(
+          `Conflict with absence: Availability set on a fully absent day (${input.date})`,
+        );
+      }
 
-    if (existing) {
-      existing.capacityHours = input.capacityHours;
-      existing.note = input.note;
-      await this.availabilityRepository.save(existing);
+      const existing = await availabilityRepo.findOne({
+        where: {
+          employeeId: input.employeeId,
+          date: input.date,
+        },
+      });
 
-      return (await this.availabilityRepository.findOne({
-        where: { id: existing.id },
+      if (existing) {
+        existing.capacityHours = input.capacityHours;
+        existing.note = input.note;
+        await availabilityRepo.save(existing);
+        return (await availabilityRepo.findOne({
+          where: { id: existing.id },
+          relations: ['employee'],
+        }))!;
+      }
+
+      const availability = await availabilityRepo.save(
+        availabilityRepo.create({
+          employeeId: input.employeeId,
+          date: input.date,
+          capacityHours: input.capacityHours,
+          note: input.note,
+        }),
+      );
+
+      return (await availabilityRepo.findOne({
+        where: { id: availability.id },
         relations: ['employee'],
       }))!;
-    }
-
-    const availability = await this.availabilityRepository.save(
-      this.availabilityRepository.create({
-        employeeId: input.employeeId,
-        date: input.date,
-        capacityHours: input.capacityHours,
-        note: input.note,
-      }),
-    );
-
-    return (await this.availabilityRepository.findOne({
-      where: { id: availability.id },
-      relations: ['employee'],
-    }))!;
+    });
   }
 
   async deleteAvailability(id: string): Promise<boolean> {
