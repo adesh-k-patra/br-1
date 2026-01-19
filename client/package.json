@@ -17,7 +17,8 @@
     "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",
     "nuxt": "^3.13.2",
-    "vue": "^3.5.12"
+    "vue": "^3.5.12",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
