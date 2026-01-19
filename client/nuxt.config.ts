@@ -7,6 +7,10 @@ export default defineNuxtConfig({
     clients: {
       default: {
         httpEndpoint: "http://localhost:3001/graphql",
+        tokenStorage: "cookie",
+        authHeader: "Authorization",
+        authType: "Bearer",
+        tokenName: "auth_token",
       },
     },
   },
