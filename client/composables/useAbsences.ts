@@ -33,73 +33,53 @@ export const useAbsences = () => {
   )
 
   const recordAbsence = async (input: any) => {
-    try {
-      await apolloClient.mutate({
-        mutation: RECORD_ABSENCE,
-        variables: { input },
-        refetchQueries: [{ query: GET_ABSENCES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Absence recorded successfully", color: "green" })
-      await refreshAbsences()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: RECORD_ABSENCE,
+      variables: { input },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Absence recorded successfully", color: "green" })
+    await refreshAbsences()
   }
 
   const requestAbsence = async (input: any) => {
-    try {
-      await apolloClient.mutate({
-        mutation: REQUEST_ABSENCE,
-        variables: { input },
-        refetchQueries: [{ query: GET_ABSENCES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Absence requested successfully", color: "green" })
-      await refreshAbsences()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: REQUEST_ABSENCE,
+      variables: { input },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Absence requested successfully", color: "green" })
+    await refreshMyAbsences()
   }
 
   const updateStatus = async (absenceId: string, status: string) => {
-    try {
-      await apolloClient.mutate({
-        mutation: UPDATE_ABSENCE_STATUS,
-        variables: {
-          input: { absenceId, status },
-        },
-        refetchQueries: [{ query: GET_ABSENCES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({
-        title: `Absence ${status.toLowerCase()}`,
-        color: status === "APPROVED" ? "green" : "yellow",
-      })
-      await refreshAbsences()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: UPDATE_ABSENCE_STATUS,
+      variables: {
+        input: { absenceId, status },
+      },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({
+      title: `Absence ${status.toLowerCase()}`,
+      color: status === "APPROVED" ? "green" : "yellow",
+    })
+    await refreshAbsences()
   }
 
   const deleteAbsence = async (id: string) => {
-    try {
-      await apolloClient.mutate({
-        mutation: DELETE_ABSENCE,
-        variables: { id },
-        refetchQueries: [{ query: GET_ABSENCES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Absence deleted", color: "green" })
-      await refreshAbsences()
-      await refreshMyAbsences()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: DELETE_ABSENCE,
+      variables: { id },
+      refetchQueries: [{ query: GET_ABSENCES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Absence deleted", color: "green" })
+    await refreshAbsences()
+    await refreshMyAbsences()
   }
 
   return {

@@ -17,53 +17,38 @@ export const useEmployees = async () => {
   const employees = computed(() => (data.value as any)?.employees || [])
 
   const createEmployee = async (input: any) => {
-    try {
-      await apolloClient.mutate({
-        mutation: CREATE_EMPLOYEE,
-        variables: { input },
-        refetchQueries: [{ query: GET_EMPLOYEES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Employee created successfully", color: "green" })
-      await refresh()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: CREATE_EMPLOYEE,
+      variables: { input },
+      refetchQueries: [{ query: GET_EMPLOYEES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Employee created successfully", color: "green" })
+    await refresh()
   }
 
   const updateEmployee = async (id: string, input: any) => {
-    try {
-      await apolloClient.mutate({
-        mutation: UPDATE_EMPLOYEE,
-        variables: {
-          input: { id, ...input },
-        },
-        refetchQueries: [{ query: GET_EMPLOYEES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Employee updated successfully", color: "green" })
-      await refresh()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: UPDATE_EMPLOYEE,
+      variables: {
+        input: { id, ...input },
+      },
+      refetchQueries: [{ query: GET_EMPLOYEES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Employee updated successfully", color: "green" })
+    await refresh()
   }
 
   const deleteEmployee = async (id: string) => {
-    try {
-      await apolloClient.mutate({
-        mutation: DELETE_EMPLOYEE,
-        variables: { id },
-        refetchQueries: [{ query: GET_EMPLOYEES }],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Employee deleted successfully", color: "green" })
-      await refresh()
-    } catch (error: any) {
-      toast.add({ title: "Error", description: error.message, color: "red" })
-      throw error
-    }
+    await apolloClient.mutate({
+      mutation: DELETE_EMPLOYEE,
+      variables: { id },
+      refetchQueries: [{ query: GET_EMPLOYEES }],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Employee deleted successfully", color: "green" })
+    await refresh()
   }
 
   return {

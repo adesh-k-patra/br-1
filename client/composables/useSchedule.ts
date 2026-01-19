@@ -59,21 +59,16 @@ export const useSchedule = async () => {
   }
 
   const setAvailability = async (input: any) => {
-    try {
-      await apolloClient.mutate({
-        mutation: SET_AVAILABILITY,
-        variables: { input },
-        refetchQueries: [
-          { query: GET_TEAM_SCHEDULE, variables: variables.value },
-        ],
-        awaitRefetchQueries: true,
-      })
-      toast.add({ title: "Availability set", color: "green" })
-      await refresh()
-    } catch (err: any) {
-      toast.add({ title: "Error", description: err.message, color: "red" })
-      throw err
-    }
+    await apolloClient.mutate({
+      mutation: SET_AVAILABILITY,
+      variables: { input },
+      refetchQueries: [
+        { query: GET_TEAM_SCHEDULE, variables: variables.value },
+      ],
+      awaitRefetchQueries: true,
+    })
+    toast.add({ title: "Availability set", color: "green" })
+    await refresh()
   }
 
   return {
