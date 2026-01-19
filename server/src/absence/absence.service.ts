@@ -122,6 +122,7 @@ export class AbsenceService {
       this.absenceRepository.create({
         ...input,
         status: AbsenceStatus.REQUESTED,
+        employee: { id: employeeId },
       }),
     );
 
