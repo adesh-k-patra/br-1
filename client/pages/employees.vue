@@ -1,31 +1,32 @@
 <script setup lang="ts">
 import EmployeeForm from "~/components/employees/EmployeeForm.vue"
 import EmployeeTable from "~/components/employees/EmployeeTable.vue"
+import type { Employee } from "~/types"
 
 const { employees, createEmployee, updateEmployee, deleteEmployee } =
   useEmployees()
 
 const isModalOpen = ref(false)
 const isDeleteModalOpen = ref(false)
-const editingEmployee = ref<any>(null)
-const deletingEmployee = ref<any>(null)
+const editingEmployee = ref<Employee | null>(null)
+const deletingEmployee = ref<Employee | null>(null)
 
 const openCreateModal = () => {
   editingEmployee.value = null
   isModalOpen.value = true
 }
 
-const openEditModal = (employee: any) => {
+const openEditModal = (employee: Employee) => {
   editingEmployee.value = employee
   isModalOpen.value = true
 }
 
-const openDeleteModal = (employee: any) => {
+const openDeleteModal = (employee: Employee) => {
   deletingEmployee.value = employee
   isDeleteModalOpen.value = true
 }
 
-const onSave = async (formData: any) => {
+const onSave = async (formData: Partial<Employee>) => {
   if (editingEmployee.value) {
     await updateEmployee(editingEmployee.value.id, formData)
   } else {

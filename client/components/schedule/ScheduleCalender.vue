@@ -1,10 +1,24 @@
 <script setup lang="ts">
 import { format, parseISO } from "date-fns"
+import type { TeamScheduleDay, TeamScheduleEmployee } from "~/types"
+
+interface EmployeeRowDay {
+  date: string
+  isAbsent: boolean
+  effectiveCapacityHours: number
+}
+
+interface EmployeeRow {
+  employeeId: string
+  employeeName?: string
+  employeeRole?: string
+  days: EmployeeRowDay[]
+}
 
 const props = defineProps<{
   currentDate: Date
   viewMode: "week" | "month"
-  teamSchedule: any[]
+  teamSchedule: TeamScheduleDay[]
 }>()
 
 const emit = defineEmits([
@@ -16,11 +30,11 @@ const emit = defineEmits([
 
 const days = computed(() => props.teamSchedule.map((d) => parseISO(d.date)))
 
-const employeeRows = computed(() => {
-  const map = new Map<string, any>()
+const employeeRows = computed<EmployeeRow[]>(() => {
+  const map = new Map<string, EmployeeRow>()
   props.teamSchedule.forEach((day) => {
-    day.employees.forEach((es) => {
-      const id = es.employee.id
+    day.employees.forEach((es: TeamScheduleEmployee) => {
+      const id = es.employee.id!
       if (!map.has(id)) {
         map.set(id, {
           employeeId: id,
@@ -29,7 +43,7 @@ const employeeRows = computed(() => {
           days: [],
         })
       }
-      map.get(id).days.push({
+      map.get(id)!.days.push({
         date: day.date,
         isAbsent: es.isAbsent,
         effectiveCapacityHours: es.effectiveCapacityHours,

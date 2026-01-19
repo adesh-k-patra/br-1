@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { z } from "zod"
+import type { Employee } from "~/types"
 
 const props = defineProps<{
-  employee?: any
+  employee?: Employee
 }>()
 
 const emit = defineEmits(["save", "cancel"])
@@ -17,14 +18,14 @@ const employeeSchema = z.object({
     .max(24, "Max capacity is 24 hours"),
 })
 
-const form = ref({
+const form = ref<Partial<Employee>>({
   name: props.employee?.name || "",
   email: props.employee?.email || "",
   role: props.employee?.role || "",
   defaultDailyCapacityHours: props.employee?.defaultDailyCapacityHours || 8,
 })
 
-const errors = ref<any>({})
+const errors = ref<Record<string, string>>({})
 
 const submitForm = () => {
   errors.value = {}

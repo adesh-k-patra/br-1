@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AbsenceCard from "~/components/absences/AbsenceCard.vue"
 import AbsenceForm from "~/components/absences/AbsenceForm.vue"
+import type { Absence } from "~/types"
 
 const { absences, employees, recordAbsence, updateStatus, deleteAbsence } =
   useAbsences()
@@ -17,10 +18,12 @@ const statusFilters = [
 
 const filteredAbsences = computed(() => {
   if (selectedStatus.value === "all") return absences.value
-  return absences.value.filter((a) => a.status === selectedStatus.value)
+  return absences.value.filter(
+    (a: Absence) => a.status === selectedStatus.value
+  )
 })
 
-const onSave = async (formData: any) => {
+const onSave = async (formData: Partial<Absence>) => {
   await recordAbsence(formData)
   isCreateModalOpen.value = false
 }

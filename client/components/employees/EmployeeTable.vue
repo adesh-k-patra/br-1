@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { Employee } from "~/types"
+
 defineProps<{
-  employees: any[]
-  columns: any[]
+  employees: Employee[]
+  columns: { key: string; label: string; sortable?: boolean }[]
 }>()
 
 defineEmits(["edit", "delete"])

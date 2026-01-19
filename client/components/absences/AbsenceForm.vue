@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { z } from "zod"
 import { isBefore, parseISO } from "date-fns"
+import type { Employee, Absence } from "~/types"
 
 const props = defineProps<{
-  employees?: any[]
+  employees?: Employee[]
   isEmployeeView?: boolean
 }>()
 
@@ -32,7 +33,7 @@ const absenceSchema = z
     }
   )
 
-const form = ref({
+const form = ref<Partial<Absence>>({
   employeeId: props.isEmployeeView ? undefined : "",
   type: "PAID_LEAVE",
   startDate: "",
@@ -40,7 +41,7 @@ const form = ref({
   comment: "",
 })
 
-const errors = ref<any>({})
+const errors = ref<Record<string, string>>({})
 
 const absenceTypes = [
   { label: "Paid Leave", value: "PAID_LEAVE" },
@@ -76,7 +77,7 @@ const submitForm = () => {
     >
       <USelectMenu
         v-model="form.employeeId"
-        :options="employees?.map((e: any) => ({ label: e.name, value: e.id })) || []"
+        :options="employees?.map((e: Employee) => ({ label: e.name, value: e.id })) || []"
         value-attribute="value"
         option-attribute="label"
         placeholder="Select employee"

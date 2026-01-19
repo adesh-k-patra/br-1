@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { format } from "date-fns"
+import type { Absence } from "~/types"
 
 const props = defineProps<{
-  absence: any
+  absence: Absence
   showEmployee?: boolean
   showApprovalActions?: boolean
 }>()

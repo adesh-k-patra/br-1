@@ -8,10 +8,12 @@ import {
 } from "date-fns"
 import { GET_TEAM_SCHEDULE } from "~/graphql/queries"
 import { SET_AVAILABILITY } from "~/graphql/mutations"
+import type { TeamScheduleDay, Availability } from "~/types"
 
 export const useSchedule = () => {
   const toast = useToast()
   const nuxtApp = useNuxtApp()
+  const { handleError } = useErrorHandler()
   const apolloClient = nuxtApp.$apollo.defaultClient
 
   const currentDate = ref(new Date())
@@ -35,14 +37,11 @@ export const useSchedule = () => {
     endDate: dateRange.value.end,
   }))
 
-  const { data: scheduleData, refresh } = useAsyncQuery(
-    GET_TEAM_SCHEDULE,
-    variables
-  )
+  const { data: scheduleData, refresh } = useAsyncQuery<{
+    teamSchedule: TeamScheduleDay[]
+  }>(GET_TEAM_SCHEDULE, variables)
 
-  const teamSchedule = computed(
-    () => (scheduleData.value as any)?.teamSchedule ?? []
-  )
+  const teamSchedule = computed(() => scheduleData.value?.teamSchedule ?? [])
 
   const navigate = (direction: "prev" | "next") => {
     if (viewMode.value === "week") {
@@ -58,17 +57,21 @@ export const useSchedule = () => {
     }
   }
 
-  const setAvailability = async (input: any) => {
-    await apolloClient.mutate({
-      mutation: SET_AVAILABILITY,
-      variables: { input },
-      refetchQueries: [
-        { query: GET_TEAM_SCHEDULE, variables: variables.value },
-      ],
-      awaitRefetchQueries: true,
-    })
-    toast.add({ title: "Availability set", color: "green" })
-    await refresh()
+  const setAvailability = async (input: Partial<Availability>) => {
+    try {
+      await apolloClient.mutate({
+        mutation: SET_AVAILABILITY,
+        variables: { input },
+        refetchQueries: [
+          { query: GET_TEAM_SCHEDULE, variables: variables.value },
+        ],
+        awaitRefetchQueries: true,
+      })
+      toast.add({ title: "Availability set", color: "green" })
+      await refresh()
+    } catch (e) {
+      handleError(e)
+    }
   }
 
   return {

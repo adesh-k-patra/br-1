@@ -1,19 +1,31 @@
 <script setup lang="ts">
 import ScheduleCalendar from "~/components/schedule/ScheduleCalender.vue"
 import ScheduleDay from "~/components/schedule/ScheduleDay.vue"
+import type { Employee, Availability } from "~/types"
 
 const { currentDate, viewMode, teamSchedule, navigate, setAvailability } =
   useSchedule()
 
 const isAvailabilityModalOpen = ref(false)
-const selectedEmployee = ref<any>(null)
+const selectedEmployee = ref<{
+  employeeId: string
+  employeeName?: string
+  employeeRole?: string
+} | null>(null)
 const availabilityData = ref({
   date: "",
   capacityHours: 8,
   note: "",
 })
 
-const openAvailabilityModal = (employee: any, day: any) => {
+const openAvailabilityModal = (
+  employee: {
+    employeeId: string
+    employeeName?: string
+    employeeRole?: string
+  },
+  day: { date: string; effectiveCapacityHours: number }
+) => {
   selectedEmployee.value = employee
   availabilityData.value = {
     date: day.date,
@@ -23,12 +35,14 @@ const openAvailabilityModal = (employee: any, day: any) => {
   isAvailabilityModalOpen.value = true
 }
 
-const onSetAvailability = async (formData: any) => {
-  await setAvailability({
-    employeeId: selectedEmployee.value.employeeId,
-    ...formData,
-    note: formData.note || null,
-  })
+const onSetAvailability = async (formData: Partial<Availability>) => {
+  if (selectedEmployee.value) {
+    await setAvailability({
+      employeeId: selectedEmployee.value.employeeId,
+      ...formData,
+      note: formData.note || undefined,
+    })
+  }
   isAvailabilityModalOpen.value = false
 }
 
