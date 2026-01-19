@@ -3,7 +3,7 @@ import AbsenceCard from "~/components/absences/AbsenceCard.vue"
 import AbsenceForm from "~/components/absences/AbsenceForm.vue"
 
 const { absences, employees, recordAbsence, updateStatus, deleteAbsence } =
-  await useAbsences()
+  useAbsences()
 
 const isCreateModalOpen = ref(false)
 const selectedStatus = ref("all")
@@ -66,6 +66,8 @@ const onSave = async (formData: any) => {
           v-for="absence in filteredAbsences"
           :key="absence.id"
           :absence="absence"
+          show-employee
+          show-approval-actions
           @approve="(id) => updateStatus(id, 'APPROVED')"
           @reject="(id) => updateStatus(id, 'REJECTED')"
           @delete="deleteAbsence"
