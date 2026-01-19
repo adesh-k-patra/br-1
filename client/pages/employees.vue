@@ -3,7 +3,7 @@ import EmployeeForm from "~/components/employees/EmployeeForm.vue"
 import EmployeeTable from "~/components/employees/EmployeeTable.vue"
 
 const { employees, createEmployee, updateEmployee, deleteEmployee } =
-  await useEmployees()
+  useEmployees()
 
 const isModalOpen = ref(false)
 const isDeleteModalOpen = ref(false)

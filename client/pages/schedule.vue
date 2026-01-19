@@ -3,7 +3,7 @@ import ScheduleCalendar from "~/components/schedule/ScheduleCalender.vue"
 import ScheduleDay from "~/components/schedule/ScheduleDay.vue"
 
 const { currentDate, viewMode, teamSchedule, navigate, setAvailability } =
-  await useSchedule()
+  useSchedule()
 
 const isAvailabilityModalOpen = ref(false)
 const selectedEmployee = ref<any>(null)

@@ -11,6 +11,19 @@ export default defineNuxtConfig({
         authHeader: "Authorization",
         authType: "Bearer",
         tokenName: "auth_token",
+        inMemoryCacheOptions: {
+          typePolicies: {
+            Employee: {
+              keyFields: ["id"],
+            },
+            Absence: {
+              keyFields: ["id"],
+            },
+            Availability: {
+              keyFields: ["id"],
+            },
+          },
+        },
       },
     },
   },

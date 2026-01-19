@@ -1,3 +1,4 @@
+import { provideApolloClient } from "@vue/apollo-composable"
 import { GET_ABSENCES, GET_EMPLOYEES } from "~/graphql/queries"
 import {
   RECORD_ABSENCE,
@@ -12,81 +13,137 @@ export const useAbsences = () => {
   const nuxtApp = useNuxtApp()
   const apolloClient = nuxtApp.$apollo.defaultClient
 
-  const { data: absencesData, refresh: refreshAbsences } =
-    useAsyncQuery(GET_ABSENCES)
-  const { data: employeesData } = useAsyncQuery(GET_EMPLOYEES)
-
-  const absences = computed(() => (absencesData.value as any)?.absences || [])
-  const employees = computed(
-    () => (employeesData.value as any)?.employees || []
+  const { result: absencesResult } = provideApolloClient(apolloClient)(() =>
+    useQuery(GET_ABSENCES)
+  )
+  const { result: employeesResult } = provideApolloClient(apolloClient)(() =>
+    useQuery(GET_EMPLOYEES)
+  )
+  const { result: myAbsencesResult } = provideApolloClient(apolloClient)(() =>
+    useQuery(GET_ABSENCES, { employeeId: user.value?.employeeId })
   )
 
-  const { data: myAbsencesData, refresh: refreshMyAbsences } = useAsyncQuery(
-    GET_ABSENCES,
-    {
-      employeeId: user.value?.employeeId,
-    }
-  )
-
-  const myAbsences = computed(
-    () => (myAbsencesData.value as any)?.absences || []
-  )
+  const absences = computed(() => absencesResult.value?.absences || [])
+  const employees = computed(() => employeesResult.value?.employees || [])
+  const myAbsences = computed(() => myAbsencesResult.value?.absences || [])
 
   const recordAbsence = async (input: any) => {
     await apolloClient.mutate({
       mutation: RECORD_ABSENCE,
       variables: { input },
-      refetchQueries: [{ query: GET_ABSENCES }],
-      awaitRefetchQueries: true,
+      update: (cache: any, { data: { recordAbsence: newAbsence } }: any) => {
+        const existingData: any = cache.readQuery({ query: GET_ABSENCES })
+        if (existingData) {
+          cache.writeQuery({
+            query: GET_ABSENCES,
+            data: {
+              absences: [...existingData.absences, newAbsence],
+            },
+          })
+        }
+      },
     })
     toast.add({ title: "Absence recorded successfully", color: "green" })
-    await refreshAbsences()
   }
 
   const requestAbsence = async (input: any) => {
     await apolloClient.mutate({
       mutation: REQUEST_ABSENCE,
       variables: { input },
-      refetchQueries: [{ query: GET_ABSENCES }],
-      awaitRefetchQueries: true,
+      update: (cache: any, { data: { requestAbsence: newAbsence } }: any) => {
+        // Update both queries
+        const existingData: any = cache.readQuery({ query: GET_ABSENCES })
+        if (existingData) {
+          cache.writeQuery({
+            query: GET_ABSENCES,
+            data: {
+              absences: [...existingData.absences, newAbsence],
+            },
+          })
+        }
+
+        const myData: any = cache.readQuery({
+          query: GET_ABSENCES,
+          variables: { employeeId: user.value?.employeeId },
+        })
+        if (myData) {
+          cache.writeQuery({
+            query: GET_ABSENCES,
+            variables: { employeeId: user.value?.employeeId },
+            data: {
+              absences: [...myData.absences, newAbsence],
+            },
+          })
+        }
+      },
     })
     toast.add({ title: "Absence requested successfully", color: "green" })
-    await refreshMyAbsences()
   }
 
   const updateStatus = async (absenceId: string, status: string) => {
     await apolloClient.mutate({
       mutation: UPDATE_ABSENCE_STATUS,
-      variables: {
-        input: { absenceId, status },
+      variables: { input: { absenceId, status } },
+      update: (
+        cache: any,
+        { data: { updateAbsenceStatus: updatedAbsence } }: any
+      ) => {
+        cache.modify({
+          id: cache.identify(updatedAbsence),
+          fields: {
+            status: () => updatedAbsence.status,
+          },
+        })
       },
-      refetchQueries: [{ query: GET_ABSENCES }],
-      awaitRefetchQueries: true,
     })
     toast.add({
       title: `Absence ${status.toLowerCase()}`,
       color: status === "APPROVED" ? "green" : "yellow",
     })
-    await refreshAbsences()
   }
 
   const deleteAbsence = async (id: string) => {
     await apolloClient.mutate({
       mutation: DELETE_ABSENCE,
       variables: { id },
-      refetchQueries: [{ query: GET_ABSENCES }],
-      awaitRefetchQueries: true,
+      update: (cache: any) => {
+        const existingData: any = cache.readQuery({ query: GET_ABSENCES })
+        if (existingData) {
+          cache.writeQuery({
+            query: GET_ABSENCES,
+            data: {
+              absences: existingData.absences.filter(
+                (abs: any) => abs.id !== id
+              ),
+            },
+          })
+        }
+
+        const myData: any = cache.readQuery({
+          query: GET_ABSENCES,
+          variables: { employeeId: user.value?.employeeId },
+        })
+        if (myData) {
+          cache.writeQuery({
+            query: GET_ABSENCES,
+            variables: { employeeId: user.value?.employeeId },
+            data: {
+              absences: myData.absences.filter((abs: any) => abs.id !== id),
+            },
+          })
+        }
+
+        cache.evict({ id: cache.identify({ __typename: "Absence", id }) })
+        cache.gc()
+      },
     })
     toast.add({ title: "Absence deleted", color: "green" })
-    await refreshAbsences()
-    await refreshMyAbsences()
   }
 
   return {
     absences,
     myAbsences,
     employees,
-    refreshAbsences,
     recordAbsence,
     requestAbsence,
     updateStatus,

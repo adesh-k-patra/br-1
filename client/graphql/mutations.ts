@@ -3,6 +3,7 @@ import gql from "graphql-tag"
 export const CREATE_EMPLOYEE = gql`
   mutation CreateEmployee($input: CreateEmployeeInput!) {
     createEmployee(input: $input) {
+      id
       email
       name
       role
