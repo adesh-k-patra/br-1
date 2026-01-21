@@ -5,7 +5,7 @@ import { EmployeeModule } from '../employee/employee.module';
 import { Availability } from './availability.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Absence } from '../absence/absence.entity';
-import { AbsenceModule } from 'src/absence/absence.module';
+import { AbsenceModule } from 'src/team-scheduling/absence/absence.module';
 
 @Module({
   imports: [

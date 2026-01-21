@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScheduleService } from 'src/schedule/schedule.service';
-import { EmployeeService } from 'src/employee/employee.service';
-import { AbsenceService } from 'src/absence/absence.service';
-import { AvailabilityService } from 'src/availability/availability.service';
-import { Employee } from 'src/employee/employee.entity';
+import { ScheduleService } from 'src/team-scheduling/schedule/schedule.service';
+import { EmployeeService } from 'src/team-scheduling/employee/employee.service';
+import { AbsenceService } from 'src/team-scheduling/absence/absence.service';
+import { AvailabilityService } from 'src/team-scheduling/availability/availability.service';
+import { Employee } from 'src/team-scheduling/employee/employee.entity';
 import {
   Absence,
   AbsenceStatus,
   AbsenceType,
-} from 'src/absence/absence.entity';
-import { Availability } from 'src/availability/availability.entity';
+} from 'src/team-scheduling/absence/absence.entity';
+import { Availability } from 'src/team-scheduling/availability/availability.entity';
 
 describe('ScheduleService', () => {
   let service: ScheduleService;

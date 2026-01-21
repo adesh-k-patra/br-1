@@ -15,7 +15,7 @@ import {
 import { Availability } from './availability.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { SetAvailabilityInput } from './availability.input';
-import { AbsenceService } from 'src/absence/absence.service';
+import { AbsenceService } from 'src/team-scheduling/absence/absence.service';
 
 @Injectable()
 export class AvailabilityService {

@@ -4,8 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { Employee } from 'src/employee/employee.entity';
-import { EmployeeService } from 'src/employee/employee.service';
+import { Employee } from 'src/team-scheduling/employee/employee.entity';
+import { EmployeeService } from 'src/team-scheduling/employee/employee.service';
 
 describe('EmployeeService', () => {
   let service: EmployeeService;

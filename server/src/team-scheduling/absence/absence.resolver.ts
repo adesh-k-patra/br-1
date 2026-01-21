@@ -14,8 +14,8 @@ import {
   RequestAbsenceInput,
   UpdateAbsenceStatusInput,
 } from './absence.input';
-import { Roles } from '../auth/role.decorator';
-import { RoleGuard } from '../auth/role.guard';
+import { Roles } from '../../auth/role.decorator';
+import { RoleGuard } from '../../auth/role.guard';
 import type { JwtPayload } from 'src/auth/jwt-payload.interface';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 

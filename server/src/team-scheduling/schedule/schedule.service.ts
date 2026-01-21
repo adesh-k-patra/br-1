@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { TeamScheduleDay } from './schedule.types';
-import { EmployeeService } from 'src/employee/employee.service';
-import { AbsenceService } from 'src/absence/absence.service';
-import { AvailabilityService } from 'src/availability/availability.service';
-import { AbsenceStatus } from 'src/absence/absence.entity';
+import { EmployeeService } from 'src/team-scheduling/employee/employee.service';
+import { AbsenceService } from 'src/team-scheduling/absence/absence.service';
+import { AvailabilityService } from 'src/team-scheduling/availability/availability.service';
+import { AbsenceStatus } from 'src/team-scheduling/absence/absence.entity';
 
 @Injectable()
 export class ScheduleService {

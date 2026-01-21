@@ -12,11 +12,11 @@ import { UseGuards } from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeInput, UpdateEmployeeInput } from './employee.input';
-import { Roles } from '../auth/role.decorator';
-import { RoleGuard } from '../auth/role.guard';
-import { Absence } from 'src/absence/absence.entity';
+import { Roles } from '../../auth/role.decorator';
+import { RoleGuard } from '../../auth/role.guard';
+import { Absence } from 'src/team-scheduling/absence/absence.entity';
 import type { IGraphQLContext } from 'src/common/loaders';
-import { Availability } from 'src/availability/availability.entity';
+import { Availability } from 'src/team-scheduling/availability/availability.entity';
 
 @Resolver(() => Employee)
 export class EmployeeResolver {

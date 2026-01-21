@@ -14,10 +14,10 @@ import {
   Absence,
   AbsenceStatus,
   AbsenceType,
-} from 'src/absence/absence.entity';
-import { AbsenceService } from 'src/absence/absence.service';
-import { EmployeeService } from 'src/employee/employee.service';
-import { Employee } from 'src/employee/employee.entity';
+} from 'src/team-scheduling/absence/absence.entity';
+import { AbsenceService } from 'src/team-scheduling/absence/absence.service';
+import { EmployeeService } from 'src/team-scheduling/employee/employee.service';
+import { Employee } from 'src/team-scheduling/employee/employee.entity';
 
 describe('AbsenceService', () => {
   let service: AbsenceService;

@@ -4,11 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, DeleteResult, DataSource, EntityManager } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { Availability } from 'src/availability/availability.entity';
-import { AvailabilityService } from 'src/availability/availability.service';
-import { EmployeeService } from 'src/employee/employee.service';
-import { AbsenceService } from 'src/absence/absence.service';
-import { Employee } from 'src/employee/employee.entity';
+import { Availability } from 'src/team-scheduling/availability/availability.entity';
+import { AvailabilityService } from 'src/team-scheduling/availability/availability.service';
+import { EmployeeService } from 'src/team-scheduling/employee/employee.service';
+import { AbsenceService } from 'src/team-scheduling/absence/absence.service';
+import { Employee } from 'src/team-scheduling/employee/employee.entity';
 
 describe('AvailabilityService', () => {
   let service: AvailabilityService;

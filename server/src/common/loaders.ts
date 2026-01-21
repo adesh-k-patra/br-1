@@ -1,8 +1,8 @@
 import DataLoader from 'dataloader';
-import { AbsenceService } from '../absence/absence.service';
-import { AvailabilityService } from '../availability/availability.service';
-import { Absence } from '../absence/absence.entity';
-import { Availability } from '../availability/availability.entity';
+import { AbsenceService } from '../team-scheduling/absence/absence.service';
+import { AvailabilityService } from '../team-scheduling/availability/availability.service';
+import { Absence } from '../team-scheduling/absence/absence.entity';
+import { Availability } from '../team-scheduling/availability/availability.entity';
 
 export interface IGraphQLContext {
   req: unknown;

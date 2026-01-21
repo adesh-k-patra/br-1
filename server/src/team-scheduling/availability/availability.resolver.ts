@@ -10,8 +10,8 @@ import { UseGuards } from '@nestjs/common';
 import { Availability } from './availability.entity';
 import { AvailabilityService } from './availability.service';
 import { SetAvailabilityInput } from './availability.input';
-import { Roles } from '../auth/role.decorator';
-import { RoleGuard } from '../auth/role.guard';
+import { Roles } from '../../auth/role.decorator';
+import { RoleGuard } from '../../auth/role.guard';
 
 @Resolver(() => Availability)
 export class AvailabilityResolver {
