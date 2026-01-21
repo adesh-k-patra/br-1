@@ -6,20 +6,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/jwt.guard';
-import { EmployeeModule } from './employee/employee.module';
-import { AvailabilityModule } from './availability/availability.module';
-import { AbsenceModule } from './absence/absence.module';
-import { ScheduleModule } from './schedule/schedule.module';
 import { ConfigModule } from '@nestjs/config';
 import { createLoaders } from './common/loaders';
-import { AbsenceService } from './absence/absence.service';
-import { AvailabilityService } from './availability/availability.service';
+import { AbsenceService } from './team-scheduling/absence/absence.service';
+import { AvailabilityService } from './team-scheduling/availability/availability.service';
+import { TeamSchedulingModule } from './team-scheduling/team-scheduling.module';
+import { TeamSkillsModule } from './team-skills/team-skills.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AbsenceModule, AvailabilityModule],
+      imports: [TeamSchedulingModule],
       useFactory: (
         absenceService: AbsenceService,
         availabilityService: AvailabilityService,
@@ -44,10 +43,13 @@ import { AvailabilityService } from './availability/availability.service';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    EmployeeModule,
-    AvailabilityModule,
-    AbsenceModule,
-    ScheduleModule,
+    TeamSchedulingModule,
+    TeamSkillsModule,
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 600,
+      max: 100,
+    }),
   ],
   providers: [
     {
