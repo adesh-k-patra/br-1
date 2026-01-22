@@ -3,7 +3,7 @@ import { z } from "zod"
 import type { Employee } from "~/types"
 
 const props = defineProps<{
-  employee?: Employee
+  employee?: Employee | null
 }>()
 
 const emit = defineEmits(["save", "cancel"])
