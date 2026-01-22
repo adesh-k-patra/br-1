@@ -15,7 +15,25 @@ export default defineNuxtConfig({
         authType: "Bearer",
         tokenName: "auth_token",
         inMemoryCacheOptions: {
-          typePolicies: {},
+          typePolicies: {
+            Query: {
+              fields: {
+                skills: {
+                  merge: false,
+                },
+                employeeSkills: {
+                  keyArgs: ["employeeId"],
+                  merge: false,
+                },
+              },
+            },
+            Skill: {
+              keyFields: ["id"],
+            },
+            EmployeeSkill: {
+              keyFields: ["id"],
+            },
+          },
         },
       },
     },
