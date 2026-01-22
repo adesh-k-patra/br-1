@@ -28,6 +28,14 @@ export class EmployeeSkillService {
     return this.employeeSkillRepository.find();
   }
 
+  async findAllByEmployee(employeeId: string): Promise<EmployeeSkill[]> {
+    await this.employeeService.findOne(employeeId);
+    return this.employeeSkillRepository.find({
+      where: { employeeId },
+      relations: ['skill'],
+    });
+  }
+
   async create(input: CreateEmployeeSkillInput): Promise<EmployeeSkill> {
     const { employeeId, skillId } = input;
     await this.employeeService.findOne(employeeId);

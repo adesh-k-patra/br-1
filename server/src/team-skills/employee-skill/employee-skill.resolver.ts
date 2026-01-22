@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, ID, Query } from '@nestjs/graphql';
 import { EmployeeSkill } from './employee-skill.entity';
 import { UseGuards } from '@nestjs/common';
 import { RoleGuard } from 'src/auth/role.guard';
@@ -12,6 +12,13 @@ import {
 @Resolver(() => EmployeeSkill)
 export class EmployeeSkillResolver {
   constructor(private readonly employeeSkillService: EmployeeSkillService) {}
+
+  @Query(() => [EmployeeSkill], { name: 'employeeSkills' })
+  async findAllByEmployee(
+    @Args('employeeId', { type: () => ID }) employeeId: string,
+  ): Promise<EmployeeSkill[]> {
+    return this.employeeSkillService.findAllByEmployee(employeeId);
+  }
 
   @Mutation(() => EmployeeSkill)
   @UseGuards(RoleGuard)
