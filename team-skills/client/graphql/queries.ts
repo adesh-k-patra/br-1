@@ -24,7 +24,7 @@ export const GET_SKILLS = gql`
 `
 
 export const GET_EMPLOYEE_SKILLS = gql`
-  query GetEmployeeSkills($employeeId: String!) {
+  query GetEmployeeSkills($employeeId: ID!) {
     employeeSkills(employeeId: $employeeId) {
       id
       employeeId
@@ -34,6 +34,7 @@ export const GET_EMPLOYEE_SKILLS = gql`
         id
         name
         category
+        description
       }
     }
   }
@@ -47,25 +48,28 @@ export const GET_SKILLS_MATRIX = gql`
         name
         category
       }
-      rows {
-        employee {
-          id
-          name
-          role
-        }
+      employees {
+        id
+        name
+        role
         skills {
           skillId
           level
         }
       }
-      analysis {
-        criticalSkills {
-          skillId
-          skillName
-          reason
-          count
-        }
+      criticalSkills {
+        skillId
+        skillName
+        holderCount
+        expertCount
+        isCritical
       }
     }
+  }
+`
+
+export const EXPORT_SKILLS_MATRIX_CSV = gql`
+  query ExportSkillsMatrixCSV($filters: MatrixFilterInput) {
+    exportSkillsMatrixCSV(filters: $filters)
   }
 `

@@ -22,14 +22,14 @@ export const UPDATE_SKILL = gql`
   }
 `
 
-export const DELETE_SKILL = gql`
-  mutation DeleteSkill($id: String!) {
-    deleteSkill(id: $id)
+export const REMOVE_SKILL = gql`
+  mutation RemoveSkill($id: ID!) {
+    removeSkill(id: $id)
   }
 `
 
 export const ASSIGN_SKILL = gql`
-  mutation AssignSkill($input: AssignSkillInput!) {
+  mutation AssignSkill($input: CreateEmployeeSkillInput!) {
     assignSkill(input: $input) {
       id
       employeeId
@@ -39,8 +39,19 @@ export const ASSIGN_SKILL = gql`
   }
 `
 
-export const REMOVE_SKILL_ASSIGNMENT = gql`
-  mutation RemoveSkillAssignment($id: String!) {
-    removeSkillAssignment(id: $id)
+export const UPDATE_EMPLOYEE_SKILL = gql`
+  mutation UpdateEmployeeSkill($input: UpdateEmployeeSkillInput!) {
+    updateEmployeeSkill(input: $input) {
+      id
+      employeeId
+      skillId
+      level
+    }
+  }
+`
+
+export const UNASSIGN_SKILL = gql`
+  mutation UnassignSkill($id: ID!) {
+    unassignSkill(id: $id)
   }
 `

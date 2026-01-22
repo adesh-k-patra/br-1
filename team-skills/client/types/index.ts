@@ -1,3 +1,8 @@
+export enum ComparisonOperator {
+  GREATER_THAN_OR_EQUAL = "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL = "LESS_THAN_OR_EQUAL",
+  EQUAL = "EQUAL",
+}
 export interface Employee {
   id: string
   name: string
@@ -32,6 +37,7 @@ export interface EmployeeSkill {
 export interface EmployeeRow {
   id: string
   name: string
+  role: string
   skills: {
     skillId: string
     level?: number
