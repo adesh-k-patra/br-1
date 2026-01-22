@@ -64,6 +64,7 @@ export class SkillsMatrixService {
     let employeeRows: EmployeeRow[] = employees.map((emp) => ({
       id: emp.id,
       name: emp.name,
+      role: emp.role,
       skills:
         assignmentsByEmployee.get(emp.id)?.map((a) => ({
           skillId: a.skillId,

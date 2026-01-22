@@ -44,6 +44,9 @@ export class EmployeeRow {
   @Field()
   name: string;
 
+  @Field()
+  role: string;
+
   @Field(() => [EmployeeSkillCell])
   skills: EmployeeSkillCell[];
 }
