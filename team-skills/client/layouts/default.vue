@@ -13,8 +13,8 @@ const { isAuthenticated, logout } = useAuth()
             </NuxtLink>
           </div>
 
-          <nav v-if="isAuthenticated" class="flex items-center gap-6">
-            <template>
+          <nav class="flex items-center gap-6">
+            <template v-if="isAuthenticated">
               <NuxtLink
                 to="/employees"
                 class="text-gray-600 hover:text-gray-900 font-medium"
