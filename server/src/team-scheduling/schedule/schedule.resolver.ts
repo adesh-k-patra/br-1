@@ -13,4 +13,12 @@ export class ScheduleResolver {
   ): Promise<TeamScheduleDay[]> {
     return this.scheduleService.getTeamSchedule(startDate, endDate);
   }
+
+  @Query(() => String)
+  exportTeamScheduleCSV(
+    @Args('startDate', { type: () => GraphQLISODateTime }) startDate: Date,
+    @Args('endDate', { type: () => GraphQLISODateTime }) endDate: Date,
+  ): Promise<string> {
+    return this.scheduleService.exportCSV(startDate, endDate);
+  }
 }

@@ -4,6 +4,7 @@ import { EmployeeService } from 'src/team-scheduling/employee/employee.service';
 import { AbsenceService } from 'src/team-scheduling/absence/absence.service';
 import { AvailabilityService } from 'src/team-scheduling/availability/availability.service';
 import { AbsenceStatus } from 'src/team-scheduling/absence/absence.entity';
+import { exportScheduleToCSV } from './schedule.exports';
 
 @Injectable()
 export class ScheduleService {
@@ -91,5 +92,10 @@ export class ScheduleService {
     }
 
     return teamScheduleDay;
+  }
+
+  async exportCSV(startDate: Date, endDate: Date): Promise<string> {
+    const schedule = await this.getTeamSchedule(startDate, endDate);
+    return exportScheduleToCSV(schedule);
   }
 }
