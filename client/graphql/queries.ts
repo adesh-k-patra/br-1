@@ -100,3 +100,9 @@ export const GET_TEAM_SCHEDULE = gql`
     }
   }
 `
+
+export const EXPORT_TEAM_SCHEDULE_CSV = gql`
+  query ExportTeamScheduleCSV($startDate: DateTime!, $endDate: DateTime!) {
+    exportTeamScheduleCSV(startDate: $startDate, endDate: $endDate)
+  }
+`
